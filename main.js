@@ -12,37 +12,48 @@ var current_file = 0;
 var current_set = 0;
 var current_bank = 0;
 
-function changeFile( file ) {
-    if(myp5){
-            myp5.remove();
-    }
+function changeFile(file) {
   current_file = file;
   var loc = current_set + '/' + current_bank + '/' + current_file;
   var filename = 'art/' + loc + '.js';
-  loadJS( filename );
+  loadJS(filename);
   document.location.hash = loc;
-  //console.log("File: " + loc);
+  console.log("File: " + loc + '.js');
 }
-function changeSet( set ) {
+
+function changeSet(set) {
   current_set = set;
   current_bank = 0;
-  console.log( "changeSet: " + current_bank );
+  console.log("changeSet: " + current_bank);
   // reset
-  changeFile( 0 );
+  changeFile(0);
 }
 
-
-function changeBank( bank ) {
+function changeBank(bank) {
   current_bank = bank;
-  console.log( "changeBank: " + current_bank );
-  changeFile( 0 );
+  console.log("changeBank: " + current_bank);
+  changeFile(0);
 }
 
-function loadJS( filename ) {
-  if ( fileref != undefined ) document.getElementsByTagName( "head" )[ 0 ].removeChild( fileref );
-  fileref = document.createElement( 'script' );
-  fileref.setAttribute( "type", "text/javascript" );
-  fileref.setAttribute( "src", filename );
-  document.getElementsByTagName( "head" )[ 0 ].appendChild( fileref );
-     myp5 = new p5(s1);
+function loadJS(filename) {
+  if (fileref != undefined) {
+    document.getElementsByTagName("head")[0].removeChild(fileref);
+  }
+  fileref = document.createElement('script');
+  fileref.setAttribute("type", "text/javascript");
+  fileref.setAttribute("src", filename);
+  document.getElementsByTagName("head")[0].appendChild(fileref);
+  // success event
+  fileref.addEventListener("load", () => {
+    // console.log("File loaded")
+    if (myp5) {
+      myp5.remove();
+    }
+    myp5 = new p5(s1);
+  });
+  // error event
+  fileref.addEventListener("error", (ev) => {
+    // console.log("Error on loading file", ev);
+  });
+
 }
